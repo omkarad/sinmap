@@ -129,3 +129,12 @@ while MENU && read -e -p "Select the desired options using their number in two d
 done
 
 ACTIONS
+echo "Your nmap command configuration looks like this: $comm"
+echo "You sure you want to start scan? (Y/n)"
+read cfrm
+if [[ "$cfrm" = "y" ]]; then
+    $comm
+    else
+    echo "Press any key to continue"
+    read
+fi
