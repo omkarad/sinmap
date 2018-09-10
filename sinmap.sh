@@ -31,7 +31,7 @@ read
 comm="sudo nmap "
 
 ## Menu options
-options[0]=" Target specification. "
+options[0]=" Misc options. "
 options[1]=" Host discovery. "
 options[2]=" Scan techniques. "
 options[3]=" Port specification and scan order. "
@@ -41,7 +41,7 @@ options[6]=" OS detection. "
 options[7]=" Timing and performance settings. "
 options[8]=" Firewall / IDS evasion and spoofing. "
 options[9]=" Output. "
-options[10]=" Misc options. "
+options[10]=" Target specification. "
 
 ## Actions to take based on selection
 
@@ -87,8 +87,73 @@ function ACTIONS {
         echo " "
     fi
     if [[ ${choices[10]} ]]; then
-        #Option 3 selected
-        echo " "
+		opta[0]=" Single target/target range. "
+		opta[1]=" Input from list of hosts/networks. "
+		opta[2]=" Choose random targets.  "
+		opta[3]=" Exclude some hosts/networks. "
+		opta[4]=" Exclude host/networks from file"
+		
+		function ACT_A {
+ 		   if [[ ${chca[0]} ]]; then
+ 		       #Option 1 selected
+ 		       echo " Enter host/hosts you want to scan. " && read hosts_scan  && comm="${comm} $hosts_scan"
+ 		   fi
+ 		   if [[ ${chca[1]} ]]; then
+ 		       #Option 2 selected
+ 		       echo " Write full path to file containing hosts/networks. Ex: /home/user/hosts.txt " && read hosts_scan_file &&  comm="${comm} -iL $hosts_scan_file"
+ 		   fi
+ 		   if [[ ${chca[2]} ]]; then
+ 		       #Option 3 selected
+ 		       echo " How many random targets you want to scan? Enter number. " && read hosts_rand && comm="${comm} -iR $hosts_rand"
+ 		   fi
+ 		   if [[ ${chca[3]} ]]; then
+ 		       #Option 4 selected
+ 		       echo " Enter hosts/networks you want to exclude from scan. " && read hosts_exclude &&  comm="${comm} --exclude $hosts_exclude "
+ 		   fi
+ 		   if [[ ${chca[4]} ]]; then
+ 		       #Option 5 selected
+ 		       echo " Write full path to file containing hosts/networks. Ex: /home/user/hosts.txt " && read hosts_exclude_file && comm="${comm} --excludefile $hosts_exclude_file"
+ 		   fi
+		}
+		
+		
+## Variables
+		
+		ERRORA=" "
+		
+## Clear screen for menu
+		
+		clear
+		
+## Menu function
+		
+		function MENU_A {
+		    echo "Host selection options. Choose ONLY ONE option from (1-3) and if needed - one from (4-5)."
+		    echo " "
+		    for NUM in ${!opta[@]}; do
+		        echo "[""${chca[NUM]:- }""]" $(( NUM+1 ))") ${opta[NUM]}"
+		    done
+		    echo "$ERRORA"
+		}
+		
+## Menu loop
+		
+		while MENU_A && read -e -p "Select the desired options using their number (again to uncheck, ENTER when done): " -n1 SELECTA && [[ -n "$SELECTA" ]]; do
+		    clear
+		    if [[ "$SELECTA" == *[[:digit:]]* && $SELECTA -ge 1 && $SELECTA -le ${#opta[@]} ]]; then
+		        (( SELECTA-- ))
+		        if [[ "${chca[SELECTA]}" == "+" ]]; then
+		            chca[SELECTA]=""
+		        else
+    		        chca[SELECTA]="+"
+    	    	fi
+            	ERRORA=" "
+    		else
+        		ERRORA="Invalid option: $SELECTA"
+    		fi
+		done
+		
+		ACT_A
     fi
 }
 
