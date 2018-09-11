@@ -32,7 +32,7 @@ comm="sudo nmap "
 
 ## Menu options
 options[0]=" Misc options. "
-options[1]=" Host discovery. "
+options[1]=" Host discovery options. "
 options[2]=" Scan techniques. "
 options[3]=" Port specification and scan order. "
 options[4]=" Service / Version detection. "
@@ -47,8 +47,86 @@ options[10]=" Target specification. "
 
 function ACTIONS {
     if [[ ${choices[0]} ]]; then
-        #Option 1 selected
-        echo " " 
+    	# Option 1 selected
+    	optb[0]=" Enable IP6 Scanning "
+    	optb[1]=" Use advanced scan techniques like OS detection etc. "
+    	optb[2]=" Use custom nmap data.  "
+    	optb[3]=" Send using raw ethernet frames or IP packets. "
+    	optb[4]=" Assume that the user is fully privileged. "
+    	optb[5]=" Assume the user lacks raw socket privileges. "
+
+    	function ACT_B {
+    	    if [[ ${chcb[0]} ]]; then
+    	        #Option 1 selected
+    	         comm="${comm} -6"
+    	    fi
+    	    if [[ ${chcb[1]} ]]; then
+    	        #Option 2 selected
+    	        comm="${comm} -A"
+    	    fi
+    	    if [[ ${chcb[2]} ]]; then
+    	        #Option 3 selected
+    	        echo " Specify custom nmap data directory. Ex:/home/user/nmap " && read custom_dir  && comm="${comm} --datadir $custom_dir"
+    	    fi
+    	    if [[ ${chcb[3]} ]]; then
+    	        #Option 4 selected
+    	        echo " Would you like to use random ethernet frames OR raw IP packets? (f/p) "
+    	        read fop
+    	        if [[ "$fop" = "f" ]]; then
+    	            comm="${comm} --send-eth "
+    	            elif [[ "$fop" = "p" ]]; then
+    	                comm="${comm} --send-ip"
+    	        fi
+    	        
+    	    fi
+    	    if [[ ${chcb[4]} ]]; then
+    	        #Option 5 selected
+    	        comm="${comm} --privileged"
+    	    fi
+    	    if [[ ${chcb[5]} ]]; then
+    	        #Option 6 selected
+    	        comm="${comm} --unprivileged"
+    	    fi
+    	}
+
+
+    	## Variables
+
+    	ERRORB=" "
+
+    	## Clear screen for menu
+
+    	clear
+
+    	## Menu function
+
+    	function MENU_B {
+    	    echo "Misc options Menu. "
+    	    echo " "
+    	    for NUM in ${!optb[@]}; do
+    	        echo "[""${chcb[NUM]:- }""]" $(( NUM+1 ))") ${optb[NUM]}"
+    	    done
+    	    echo "$ERRORB"
+    	}
+
+    	## Menu loop
+
+    	while MENU_B && read -e -p "Select the desired options using their number (again to uncheck, ENTER when done): " -n1 SELECTB && [[ -n "$SELECTB" ]]; do
+    	    clear
+    	    if [[ "$SELECTB" == *[[:digit:]]* && $SELECTB -ge 1 && $SELECTB -le ${#optb[@]} ]]; then
+    	        (( SELECTB-- ))
+    	        if [[ "${chcb[SELECTB]}" == "+" ]]; then
+    	            chcb[SELECTB]=""
+    	        else
+    	            chcb[SELECTB]="+"
+    	        fi
+    	            ERRORB=" "
+    	    else
+    	        ERRORB="Invalid option: $SELECTB"
+    	    fi
+    	done
+
+    	ACT_B 
     fi
     if [[ ${choices[1]} ]]; then
         #Option 2 selected
@@ -150,7 +228,7 @@ function ACTIONS {
             	ERRORA=" "
     		else
         		ERRORA="Invalid option: $SELECTA"
-    		fi
+    	f	i
 		done
 		
 		ACT_A
