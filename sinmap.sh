@@ -22,13 +22,13 @@ echo ' `--. \ | | | . ` || |\/| ||  _  ||  __/ '
 echo '/\__/ /_| |_| |\  || |  | || | | || |    '
 echo '\____/ \___/\_| \_/\_|  |_/\_| |_/\_|    '
 echo ""
-echo ""                         
+echo "  Simple nmap Scan Script by: OmkaraD"                         
 echo "        Press ENTER to start"                                         
 read 
 
 ## Main menu
 
-comm="sudo nmap "
+comm="sudo nmap"
 
 ## Menu options
 options[0]=" Misc options. "
