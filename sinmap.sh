@@ -228,7 +228,7 @@ function ACTIONS {
             	ERRORA=" "
     		else
         		ERRORA="Invalid option: $SELECTA"
-    	f	i
+    		fi
 		done
 		
 		ACT_A
